@@ -14,12 +14,24 @@ const app = express();
 
 configurePassport(passport);
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://task-management-rho-ivory.vercel.app"
+];
+
 app.use(
   cors({
-    origin: env.clientUrl,
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
-  }),
+  })
 );
+
 app.use(helmet());
 app.use(morgan(env.nodeEnv === 'production' ? 'combined' : 'dev'));
 app.use(express.json({ limit: '2mb' }));
