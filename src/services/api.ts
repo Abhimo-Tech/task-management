@@ -66,7 +66,7 @@ export type ProductivityReport = {
 
 const API_BASE_URL =
   (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, '') ||
-  'http://localhost:5000/api';
+  'https://task-management-f6nv.onrender.com/api';
 
 type ApiEnvelope<T> = {
   success: boolean;
@@ -93,7 +93,7 @@ async function apiRequest<T>(path: string, options: RequestInit = {}) {
     });
   } catch (_error) {
     throw new Error(
-      'Cannot connect to backend. Start the TaskFlow backend server on http://localhost:5000.',
+      'Cannot connect to backend. Please check your server connection.',
     );
   }
 
@@ -116,12 +116,14 @@ export const authApi = {
       body: JSON.stringify({ email, password }),
     });
   },
+
   register(name: string, email: string, password: string) {
     return apiRequest<AuthResponse>('/auth/register', {
       method: 'POST',
       body: JSON.stringify({ name, email, password }),
     });
   },
+
   setPassword(token: string, password: string) {
     return apiRequest<{ user: AuthUser }>('/auth/set-password', {
       method: 'POST',
@@ -129,20 +131,25 @@ export const authApi = {
       body: JSON.stringify({ password, confirmPassword: password }),
     });
   },
+
   forgotPassword(email: string) {
     return apiRequest<null>('/auth/forgot-password', {
       method: 'POST',
       body: JSON.stringify({ email }),
     });
   },
+
   resetPassword(token: string, password: string, confirmPassword: string) {
     return apiRequest<{ message: string }>(`/auth/reset-password/${token}`, {
       method: 'POST',
       body: JSON.stringify({ password, confirmPassword }),
     });
   },
+
   getGoogleAuthUrl(redirectUrl: string) {
-    return `${API_BASE_URL}/auth/google?redirect_url=${encodeURIComponent(redirectUrl)}`;
+    return `${API_BASE_URL}/auth/google?redirect_url=${encodeURIComponent(
+      redirectUrl,
+    )}`;
   },
 };
 
@@ -182,16 +189,19 @@ export const reportApi = {
       headers: getAuthHeaders(token),
     });
   },
+
   async getStatusDistribution(token: string) {
     return apiRequest<DistributionItem[]>('/reports/status-distribution', {
       headers: getAuthHeaders(token),
     });
   },
+
   async getCategoryAnalysis(token: string) {
     return apiRequest<DistributionItem[]>('/reports/category-analysis', {
       headers: getAuthHeaders(token),
     });
   },
+
   async getProductivity(token: string) {
     return apiRequest<ProductivityReport>('/reports/productivity', {
       headers: getAuthHeaders(token),
