@@ -16,7 +16,8 @@ configurePassport(passport);
 
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://task-management-rho-ivory.vercel.app"
+  "https://task-management-rho-ivory.vercel.app",
+  "https://task-management-135plwsca-abhimos-projects.vercel.app"
 ];
 
 app.use(
