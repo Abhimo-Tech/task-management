@@ -14,31 +14,31 @@ const app = express();
 
 configurePassport(passport);
 
-const allowedOrigins = [
-  "http://localhost:5173",
-  "https://task-management-rho-ivory.vercel.app",
-  "https://task-management-135plwsca-abhimos-projects.vercel.app"
-];
-
+// ✅ Updated CORS Configuration
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: true,
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
 
+// ✅ Handle Preflight Requests
+app.options('*', cors());
+
 app.use(helmet());
-app.use(morgan(env.nodeEnv === 'production' ? 'combined' : 'dev'));
+
+app.use(
+  morgan(env.nodeEnv === 'production' ? 'combined' : 'dev')
+);
+
 app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true }));
+
 app.use(passport.initialize());
 
+// ✅ Health Route
 app.get('/health', (_request, response) => {
   response.status(200).json({
     success: true,
@@ -47,8 +47,13 @@ app.get('/health', (_request, response) => {
   });
 });
 
+// ✅ API Routes
 app.use('/api', routes);
+
+// ✅ Not Found Middleware
 app.use(notFoundMiddleware);
+
+// ✅ Error Middleware
 app.use(errorMiddleware);
 
 module.exports = app;
