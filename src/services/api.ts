@@ -65,7 +65,6 @@ export type ProductivityReport = {
 };
 
 const API_BASE_URL =
-  (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, '') ||
   'https://task-management-f6nv.onrender.com/api';
 
 type ApiEnvelope<T> = {
